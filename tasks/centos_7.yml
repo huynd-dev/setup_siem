@@ -1,0 +1,56 @@
+---
+- name: Install auditd
+  yum:
+          name: audit
+          state: latest
+
+- name: Start auditd
+  service:
+          name: auditd
+          state: started
+
+- name: Install audispd-plugins
+  yum:
+          name: audispd-plugins
+          state: latest
+
+- name: Enable auditd
+  systemd:
+          name: auditd
+          state: started
+          enabled: yes
+
+- name: Config dispatcher /etc/audisp/plugins.d/syslog.conf
+  template:
+          src: syslog.conf.j2
+          dest: /etc/audisp/plugins.d/syslog.conf
+          
+- name: Add audit rule /etc/audit/rules.d/audit.rules
+  lineinfile:
+          path: /etc/audit/rules.d/audit.rules
+          line: "-a exit,always -F arch=b64 -S execve"
+          create: yes
+
+- name: Add audit rule /etc/audit/audit.rule
+  lineinfile:
+          path: /etc/audit/audit.rule
+          line: "-a exit,always -F arch=b64 -S execve"
+          create: yes
+
+- name: Config /etc/rsyslog.conf
+  lineinfile:
+          path: /etc/rsyslog.conf
+          line: "$LocalHostName {{ ansible_ssh_host }}"
+
+- name: Config /etc/rsyslog.conf
+  lineinfile:
+          path: /etc/rsyslog.conf
+          line: "local6.*      @{{ siem_server }}"
+
+- name: Restart service auditd
+  shell: "service auditd restart"
+
+- name: Restart service rsyslog
+  service:
+          name: rsyslog
+          state: restarted
