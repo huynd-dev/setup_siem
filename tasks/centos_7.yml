@@ -1,18 +1,29 @@
 ---
-- name: Install auditd
+- name: Copy package auditd, audispd-plugins to /tmp
+  copy:
+          src: "{{ item }}"
+          dest: /tmp/{{ item }}
+  loop:
+          - audit-2.8.5-4.el7.x86_64.rpm
+          - audispd-plugins-2.8.5-4.el7.x86_64.rpm  
+
+- name: Install auditd and audispd-plugins
   yum:
-          name: audit
-          state: latest
+          name: /tmp/{{ item }}
+          state: present
+  loop:
+          - audit-2.8.5-4.el7.x86_64.rpm
+          - audispd-plugins-2.8.5-4.el7.x86_64.rpm
 
 - name: Start auditd
   service:
           name: auditd
           state: started
 
-- name: Install audispd-plugins
-  yum:
-          name: audispd-plugins
-          state: latest
+          #- name: Install audispd-plugins
+          #  yum:
+          #          name: audispd-plugins
+          #          state: latest
 
 - name: Enable auditd
   systemd:
