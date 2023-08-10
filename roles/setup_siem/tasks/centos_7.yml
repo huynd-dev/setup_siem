@@ -58,6 +58,11 @@
           path: /etc/rsyslog.conf
           line: "local6.*      @@{{ siem_server }}"
 
+- name: Config /etc/rsyslog.conf
+  lineinfile:
+          path: /etc/rsyslog.conf
+          line: "authpriv.*     @@{{ siem_server }}"
+
 - name: Restart service auditd
   shell: "service auditd restart"
 
