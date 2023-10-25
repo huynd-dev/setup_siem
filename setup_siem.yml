@@ -1,6 +1,6 @@
 ---
 - name: Install siem
-  hosts: lgsp_qni
+  hosts: host
   become: yes
   roles:
           - setup_siem
