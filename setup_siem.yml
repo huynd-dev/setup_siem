@@ -1,5 +1,6 @@
 ---
 - name: Install siem
+  hosts: lgsp
   become: yes
   roles:
           - setup_siem
